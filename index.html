@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Toko Journal — Koleksi Vintage</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --cream:#FFF8EE;
+      --soft-cream:#F7E2CC;
+      --paper:#FFFDF9;
+      --accent:#A57C50;
+      --muted:#7A6A5A;
+      --glass: rgba(255,255,255,0.6);
+      --radius:14px;
+      --card-shadow: 0 8px 20px rgba(106,90,77,0.12);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;min-height:100vh;background:linear-gradient(180deg,var(--cream),var(--paper));
+      font-family:Inter,system-ui,Arial; color:var(--muted);
+      -webkit-font-smoothing:antialiased;padding:36px;
+    }
+    .container{max-width:1100px;margin:0 auto}
+
+    header{display:flex;align-items:center;gap:18px;margin-bottom:22px}
+    .brand{display:flex;flex-direction:column}
+    h1{font-family:'Playfair Display',serif;margin:0;font-size:28px;color:var(--accent)}
+    p.lead{margin:2px 0 0;font-size:13px;color:rgba(122,106,90,0.9)}
+
+    /* Controls */
+    .controls{display:flex;gap:12px;align-items:center;margin:18px 0 28px}
+    .search{flex:1;position:relative}
+    .search input{width:100%;padding:12px 40px 12px 16px;background:var(--glass);border:1px solid rgba(122,106,90,0.08);border-radius:12px;font-size:14px}
+    .search .icon{position:absolute;right:10px;top:50%;transform:translateY(-50%);opacity:0.6}
+
+    select, .btn{padding:10px 14px;border-radius:12px;border:1px solid rgba(122,106,90,0.08);background:white;font-size:14px}
+    .btn{cursor:pointer}
+
+    /* Grid */
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px}
+    .card{
+      background:linear-gradient(180deg,rgba(255,255,255,0.75),rgba(247,226,204,0.7));
+      border-radius:var(--radius);padding:14px;box-shadow:var(--card-shadow);position:relative;overflow:hidden;transition:transform .28s ease,box-shadow .28s ease;
+      border:1px solid rgba(165,124,80,0.06);
+      display:flex;flex-direction:column;gap:8px;backdrop-filter: blur(2px);
+    }
+    .card:hover{transform:translateY(-8px) rotate(-0.6deg);box-shadow:0 22px 40px rgba(106,90,77,0.16)}
+    .cover{height:160px;border-radius:10px;overflow:hidden;background:linear-gradient(135deg,rgba(165,124,80,0.06),rgba(122,106,90,0.02));display:flex;align-items:center;justify-content:center}
+    .cover img{width:100%;height:100%;object-fit:cover}
+
+    .meta{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:rgba(122,106,90,0.9)}
+    .title{font-family:'Playfair Display',serif;font-size:16px;margin:0;color:var(--accent)}
+    .excerpt{font-size:13px;line-height:1.3;color:rgba(122,106,90,0.85)}
+
+    .tags{display:flex;gap:8px;flex-wrap:wrap}
+    .tag{font-size:12px;padding:6px 8px;border-radius:999px;background:rgba(165,124,80,0.08);color:var(--accent);border:1px solid rgba(165,124,80,0.06)}
+
+    .actions{display:flex;gap:8px;margin-top:6px}
+    .actions .btn{flex:1}
+
+    /* Modal */
+    .overlay{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(10,8,6,0.45);z-index:60}
+    .overlay.active{display:flex}
+    .modal{width:min(780px,95%);background:var(--paper);padding:20px;border-radius:16px;box-shadow:0 26px 60px rgba(0,0,0,0.25);}
+    .modal h2{margin:0 0 10px;font-family:'Playfair Display',serif}
+    .modal p{margin:0 0 14px}
+
+    /* small helpers */
+    .faded{opacity:0.72}
+    .empty{padding:36px;text-align:center;color:rgba(122,106,90,0.8)}
+
+    /* responsive tweaks */
+    @media (max-width:520px){h1{font-size:22px}.cover{height:140px}}
+
+    /* subtle vintage texture */
+    body::after{content:'';position:fixed;inset:0;pointer-events:none;background-image:radial-gradient(rgba(0,0,0,0.01) 1px,transparent 2px);opacity:0.35}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div style="width:64px;height:64px;border-radius:12px;background:linear-gradient(135deg,var(--soft-cream),var(--paper));display:flex;align-items:center;justify-content:center;border:1px solid rgba(165,124,80,0.08)">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" aria-hidden><path d="M4 6h16v12H4z" stroke="var(--accent)" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="brand">
+        <h1>Toko Journal</h1>
+        <p class="lead">Koleksi jurnal — gaya vintage, warna cerah, dan sentuhan modern.</p>
+      </div>
+    </header>
+
+    <div class="controls">
+      <div class="search">
+        <input id="q" placeholder="Cari judul, tema, atau kata kunci..." aria-label="Cari jurnal">
+        <svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" style="opacity:.6"><path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="11" cy="11" r="6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <select id="category">
+        <option value="all">Semua Kategori</option>
+        <option value="travel">Travel</option>
+        <option value="daily">Daily</option>
+        <option value="art">Art & Sketch</option>
+        <option value="recipe">Recipe</option>
+      </select>
+      <select id="sort">
+        <option value="new">Terbaru</option>
+        <option value="popular">Terpopuler</option>
+        <option value="az">A → Z</option>
+      </select>
+    </div>
+
+    <main>
+      <section id="grid" class="grid" aria-live="polite">
+        <!-- cards injected by JS -->
+      </section>
+      <div id="empty" class="empty" style="display:none">Tidak ditemukan jurnal. Coba kata kunci lain.</div>
+    </main>
+  </div>
+
+  <!-- modal -->
+  <div id="overlay" class="overlay" role="dialog" aria-hidden="true">
+    <div class="modal" role="document">
+      <button id="closeModal" class="btn" style="float:right">Tutup</button>
+      <h2 id="mdTitle">Judul</h2>
+      <p id="mdMeta" class="faded"></p>
+      <div id="mdBody"></div>
+    </div>
+  </div>
+
+  <script>
+    // Sample data
+    const journals = [
+      {id:1,title:'Catatan Perjalanan: Yogyakarta',category:'travel',date:'2025-06-11',pop:124,cover:'https://images.unsplash.com/photo-1508921912186-1d1a45ebb3c1?q=80&w=1400&auto=format&fit=crop&ixlib=rb-4.0.3&s=5b9d6b0a6b3a5b9d6b0a6b3a5b9d6b0a',excerpt:'Jalan-jalan sore di Malioboro, tawa, dan secangkir teh hangat.'},
+      {id:2,title:'Daily Log: Kebiasaan Menulis',category:'daily',date:'2025-04-02',pop:84,cover:'https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1400&auto=format&fit=crop&ixlib=rb-4.0.3&s=8d9b9b9b9b9b9b9b9b9b9b9',excerpt:'Ritual pagi: 10 menit menulis tanpa henti untuk mengosongkan kepala.'},
+      {id:3,title:'Sketsa Urban: Sudut Kota',category:'art',date:'2025-01-15',pop:46,cover:'https://images.unsplash.com/photo-1526318472351-c75fcf0701f1?q=80&w=1400&auto=format&fit=crop&ixlib=rb-4.0.3&s=6b6b6b6b6b6b6b6b6b6b6b6',excerpt:'Menggambar gedung tua dan lampu jalan—nada-nada coklat dan krim.'},
+      {id:4,title:'Resep: Kue Tradisional',category:'recipe',date:'2025-03-22',pop:158,cover:'https://images.unsplash.com/photo-1543779506-6f3d6f2f2b3d?q=80&w=1400&auto=format&fit=crop&ixlib=rb-4.0.3&s=3c3c3c3c3c3c3c3c3c3c3c3',excerpt:'Resep turun-temurun — aroma kayu manis dan gula aren.'},
+      {id:5,title:'Catatan Malam: Refleksi',category:'daily',date:'2024-12-01',pop:32,cover:'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1400&auto=format&fit=crop&ixlib=rb-4.0.3&s=1a1a1a1a1a1a1a1a1a1a1a1',excerpt:'Menulis di malam yang sunyi, tentang perbaikan kecil setiap hari.'}
+    ];
+
+    // Utilities
+    const $ = sel => document.querySelector(sel);
+    const grid = $('#grid');
+    const empty = $('#empty');
+
+    function render(list){
+      grid.innerHTML='';
+      if(!list.length){empty.style.display='block'; return}
+      empty.style.display='none';
+      list.forEach(item=>{
+        const el = document.createElement('article');
+        el.className='card';
+        el.setAttribute('data-id',item.id);
+        el.innerHTML = `
+          <div class="cover" aria-hidden="true"><img src="${item.cover}" alt="Cover ${item.title}" loading="lazy"></div>
+          <div>
+            <h3 class="title">${item.title}</h3>
+            <div class="meta"><span class="faded">${item.date}</span><span class="faded">♥ ${item.pop}</span></div>
+            <p class="excerpt">${item.excerpt}</p>
+            <div class="tags"><span class="tag">${item.category}</span></div>
+            <div class="actions"><button class="btn open">Buka</button><button class="btn">Tambah ke keranjang</button></div>
+          </div>
+        `;
+        // tilt effect
+        el.addEventListener('mousemove', tilt);
+        el.addEventListener('mouseleave', e=>{el.style.transform='translateY(-0px) rotate(0deg)'});
+        // open modal
+        el.querySelector('.open').addEventListener('click', ()=>openModal(item));
+        grid.appendChild(el);
+      })
+    }
+
+    function tilt(e){
+      const el = e.currentTarget;
+      const rect = el.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width - 0.5;
+      const y = (e.clientY - rect.top) / rect.height - 0.5;
+      const rx = (y * 6).toFixed(2);
+      const ry = (x * -8).toFixed(2);
+      el.style.transform = `translateY(-6px) rotateX(${rx}deg) rotateY(${ry}deg)`;
+    }
+
+    // filtering & search
+    function query(){
+      const q = $('#q').value.trim().toLowerCase();
+      const cat = $('#category').value;
+      const sort = $('#sort').value;
+      let out = journals.filter(j=>{
+        const matchQ = !q || (j.title+j.excerpt+j.category).toLowerCase().includes(q);
+        const matchCat = cat==='all' || j.category===cat;
+        return matchQ && matchCat;
+      });
+      if(sort==='new') out = out.sort((a,b)=> new Date(b.date)-new Date(a.date));
+      else if(sort==='popular') out = out.sort((a,b)=> b.pop - a.pop);
+      else if(sort==='az') out = out.sort((a,b)=> a.title.localeCompare(b.title));
+      render(out);
+    }
+
+    // modal
+    const overlay = $('#overlay');
+    function openModal(item){
+      $('#mdTitle').textContent = item.title;
+      $('#mdMeta').textContent = `${item.category} • ${item.date} • ${item.pop} likes`;
+      $('#mdBody').innerHTML = `<p>${item.excerpt}</p><p style="margin-top:12px;line-height:1.5">Isi jurnal lengkap belum tersedia pada demo, tapi di sini kamu bisa menaruh preview panjang, foto tambahan, dan tombol unduh/preview untuk setiap jurnal.</p>`;
+      overlay.classList.add('active'); overlay.setAttribute('aria-hidden','false');
+    }
+    $('#closeModal').addEventListener('click', ()=>{overlay.classList.remove('active'); overlay.setAttribute('aria-hidden','true')});
+    overlay.addEventListener('click', (e)=>{ if(e.target===overlay){overlay.classList.remove('active'); overlay.setAttribute('aria-hidden','true')} });
+
+    // init
+    render(journals);
+    // events
+    $('#q').addEventListener('input', debounce(query,220));
+    $('#category').addEventListener('change', query);
+    $('#sort').addEventListener('change', query);
+
+    // small helpers
+    function debounce(fn,t){let tid;return (...a)=>{clearTimeout(tid);tid=setTimeout(()=>fn(...a),t)}}
+
+    // keyboard accessibility: open first card with Enter when focused
+    document.addEventListener('keydown', (e)=>{
+      if(e.key==='/' && document.activeElement.tagName!=='INPUT'){
+        e.preventDefault(); $('#q').focus();
+      }
+    });
+  </script>
+</body>
+</html>
